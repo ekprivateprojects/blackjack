@@ -1,17 +1,16 @@
 class window.HandView extends Backbone.View
   className: 'hand'
 
-  template: _.template '<h2><% if(isDealer){ %>Dealer<% }else{ %>You<% } %> (<span class="score"></span>)</h2>'
+  template: _.template '<div></div>'
 
-# '<h2><% if(isDealer){ %>Dealer<% }else{ %>You<% } %> (<span class="score"></span>)</h2>'
-
-  initialize: ->
+  initialize: (params) ->
     @collection.on 'add remove change', => @render()
     @render()
 
   render: ->
     @$el.children().detach()
-    @$el.html @template @collection
-    @$el.append @collection.map (card) ->
-      new CardView(model: card).$el
-    @$('.score').text @collection.scores()[0]
+    @$el.html @template @model
+    console.log("this should also be a hand")
+    console.log(@collection)
+    # @$el.append @collection.map (card) ->
+    #  new CardView({model: card}).$el

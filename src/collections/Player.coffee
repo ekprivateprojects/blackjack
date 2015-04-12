@@ -1,20 +1,24 @@
 class window.Player extends Backbone.Collection
-  model: Hand
+  collection: Hand
 
-  initialize: (@isDealer, @deck, @bank) ->
+  initialize: (params) ->
     @numHands = 0
-    @currentHand = @collection[@numHands]
-    @collection.on 'split', @split(hand)
-    @collection.on 'bust',  @bust(hand)
-    @collection.on 'stand', @stand(hand)
+    @isDealer = params.isDealer
+    @bank = params.bank
+    @deck = params.deck
+    @currentHand = params.hand
+
+    @.on 'split', ->@split
+    @.on 'bust',  ->@bust
+    @.on 'stand', ->@stand
 
   hit: ->
     @get 'currentHand'.hit()
 
   stand: ->
-    if @numHands < @collection.length
+    if @numHands < @.length
       @currentHand.set 'chosen', false
-      @currentHand = @collection[++@numHands]
+      @currentHand = @[++@numHands]
       @currentHand.set 'chosen', true
       @trigger('switchedHands')
     else
@@ -27,14 +31,17 @@ class window.Player extends Backbone.Collection
   minusBet: ->
     @currentHand.minusBet()
 
-  split: (hand) ->
-    @collection.add(new Hand([hand.remove()], hand.get('deck')))
+  split: ->
+    hand = @.get 'currentHand'
+    console.log(hand)
+    @.add(new Hand([hand.remove()], hand.get('deck')))
 
-  bust: (hand) ->
-    @currentHand = hand
+  bust: ->
+    @currentHand = @.get 'currentHand'
     @trigger 'bust'
 
   lose: ->
+    console.log('lose')
     @bank -= @currentHand.get 'bet'
-    @collection.remove(@currentHand)
+    @.remove(@currentHand)
     @currentHand = null

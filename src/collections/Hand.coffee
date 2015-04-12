@@ -6,7 +6,7 @@ class window.Hand extends Backbone.Collection
     @bet = 5
 
   split: ->
-    if @collection[0] == @collection[1] and @hitCount == 0
+    if @.at 0 == @.at 1 and @hitCount == 0
       @trigger 'split'
 
   doubleDown: ->

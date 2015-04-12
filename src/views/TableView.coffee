@@ -21,6 +21,11 @@ class window.TableView extends Backbone.View
   render: ->
     @$el.children().detach()
     @$el.html @template()
-    @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
-    @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
+
+    @$('.dealer-hand-container').html new PlayerView({model: @model.get 'dealer'}).el
+
+    players = @model.get 'players'
+    @$('.player-hand-container').append players.map (player) ->
+      new PlayerView({model : player}).$el
+
 

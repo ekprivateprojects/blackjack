@@ -2,24 +2,26 @@
 # of containing the game logic directly.
 class window.Table extends Backbone.Model
   initialize: ->
-    @set 'deck', deck = new Deck()
-    @set 'players', []
+    @.set 'deck', deck = new Deck()
+    @.set 'players', []
 
     # instantiate players
-    for i in [0...1]
-      player = new Player(false, 100)
-      player.add(new Hand([deck.pop(), deck.pop()], @deck))
-      player.on 'bust', @bust(player)
-      player.on 'turnOver', @stand(player)
-      player.on 'switchedHands', @trigger 'update'
-      @get 'players'.push(player)
+    for i in [0...2]
+      hand = new Hand([deck.pop(), deck.pop()], @deck)
+      player = new Player({hand: hand, isDealer: false, deck: @deck, bank: 100})
+      player.on 'bust', ->@bust(player)
+      player.on 'turnOver', ->@stand(player)
+      player.on 'switchedHands', ->@trigger 'update'
+
+      p = @.get 'players'
+      p.push player
 
     #set current player
-    @set 'currentPlayer', @get 'players'[0]
+    @.set 'currentPlayer', @.get 'players'[0]
 
     #instantiate dealer
-    dealer = new Player(true)
-    dealer.add(new Hand([deck.pop(), deck.pop()], @deck))
+    hand = new Hand([deck.pop(), deck.pop()], @deck)
+    dealer = new Player({hand: hand, isDealer: true, deck: @deck})
     dealer.on 'bust', @dealerBust
     dealer.on 'stand', @dealerStand
     @set 'dealer', dealer
